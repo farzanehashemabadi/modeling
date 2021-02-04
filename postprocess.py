@@ -33,7 +33,7 @@ positions = [(49.68, 29.94, 0)]
              #(52.78, 25.92, 0),
              #(52.53, 26.31, 0)]
 
-src_dirs = [os.path.join(base_direct, f'Result{spill_num}_{position}') for spill_num, position in zip(range(1,101), range(1,17))]
+src_dirs = [os.path.join(base_direct, 'Result{spill_num}_{position}'.format(spill_num=spill_num, position=position)) for spill_num, position in zip(range(1,101), range(1,17))]
 
 
 
