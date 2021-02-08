@@ -253,15 +253,17 @@ def run (position, startday, spilldur):
 
 #loop for scenarios
 def senarios (positions, str_days, str_times, spill_dur):
-    for index, j in enumerate(str_days):
-        start_date = datetime.strptime('2016 {}'.format (j[0]), '%Y %j')
-        for t in str_times[index]:
-            new_start_date = start_date.replace (hour = t)
-            for z in spill_dur[index]:
-                run(i, new_start_date, z)
-                spill_num += 1
+    for i in positions:
+        for index, j in enumerate(str_days):
+            start_date = datetime.strptime('2016 {}'.format (j[0]), '%Y %j')
+            for t in str_times[index]:
+                new_start_date = start_date.replace (hour = t)
+                for z in spill_dur[index]:
+                    run(i, new_start_date, z)
+                    spill_num += 1
 
 
+senarios (positions, str_days, str_times, spill_dur)
 
 #starttime from days of Summer
 startdays = lhs(1,samples=1)
