@@ -171,9 +171,9 @@ def run (position, startday, spilldur, season):
          # with open("Result {}".format(spill_num), "w") as fp:
          # fp.write("text")
         
-        dir_name = os.path.join (base_dir, "Result{}_{}".format(spill_num, position))
+        dir_name = os.path.join (base_dir, season, "Result{}_{}".format(spill_num, position))
         if not os.path.exists(dir_name):
-            os.mkdir(dir_name)
+            os.mkdir(dir_name, parents=True)
 
         for i in range(1, 31, 1):
             model.outputters += ShapeOutput(os.path.join(dir_name, 'gnome_result{id}_{spillnum}'.format(id=i, spillnum=spill_num)),
@@ -227,7 +227,7 @@ def run (position, startday, spilldur, season):
         ####### open excel file 
         print ('adding Excel file')
         #name = 'Result{}_{}'.format(spill_num, position)
-        workbook = xlsxwriter.Workbook(os.path.join(dir_name, season, 'Result{}_{}.xlsx'.format(spill_num, position)))
+        workbook = xlsxwriter.Workbook(os.path.join(dir_name, 'Result{}_{}.xlsx'.format(spill_num, position)))
         worksheet = workbook.add_worksheet () 
         worksheet.write ('A1', spilldur*3200)
 
