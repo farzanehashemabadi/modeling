@@ -116,7 +116,7 @@ f.close()
 
 
             
-def run (position, startday, spilldur):
+def run (position, startday, spilldur, season):
    
     #define base directory
     #path='/home/farzaneh.hashemabadi.student/2016' 
@@ -171,9 +171,9 @@ def run (position, startday, spilldur):
          # with open("Result {}".format(spill_num), "w") as fp:
          # fp.write("text")
         
-        dir_name = os.path.join (base_dir, "Result{}_{}".format(spill_num, position))
+        dir_name = os.path.join (base_dir, season, "Result{}_{}".format(spill_num, position))
         if not os.path.exists(dir_name):
-            os.mkdir(dir_name)
+            os.mkdir(dir_name, parents=True)
 
         for i in range(1, 31, 1):
             model.outputters += ShapeOutput(os.path.join(dir_name, 'gnome_result{id}_{spillnum}'.format(id=i, spillnum=spill_num)),
@@ -252,18 +252,18 @@ def run (position, startday, spilldur):
 
 
 #loop for scenarios
-def senarios (positions, str_days, str_times, spill_dur):
+def senarios (positions, str_days, str_times, spill_dur, season):
     for i in positions:
         for index, j in enumerate(str_days):
             start_date = datetime.strptime('2016 {}'.format (j[0]), '%Y %j')
             for t in str_times[index]:
                 new_start_date = start_date.replace (hour = t)
                 for z in spill_dur[index]:
-                    run(i, new_start_date, z)
+                    run(i, new_start_date, z, season)
                     spill_num += 1
 
 
-senarios (positions, str_days, str_times, spill_dur)
+senarios (positions, str_days, str_times, spill_dur, 'winter')
 
 #starttime from days of Summer
 startdays = lhs(1,samples=1)
@@ -272,4 +272,4 @@ startdays = uniform(loc=182,scale=274).ppf(startdays)
 
 str_days = startdays.astype(int)
 
-senarios (positions, str_days, str_times, spill_dur)
+senarios (positions, str_days, str_times, spill_dur, 'summer')
