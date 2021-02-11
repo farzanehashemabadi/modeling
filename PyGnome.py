@@ -89,7 +89,7 @@ from pyDOE import lhs
 from scipy.stats.distributions import triang,uniform
 
 #starttime from days of winter
-startdays = lhs(1,samples=10)
+startdays = lhs(1,samples=2)
 
 startdays = uniform(loc=1,scale=91).ppf(startdays)
 
@@ -97,10 +97,10 @@ str_days = startdays.astype(int)
 
 #print ("start days" + ":",str_days.astype(int))
 
-spill_num = 1
+
 #############################
 
-starttimes = lhs(1,samples=10)
+starttimes = lhs(1,samples=2)
 
 starttimes = uniform(loc=0,scale=24).ppf(starttimes)
 
@@ -113,9 +113,9 @@ str_times = starttimes.astype(int)
 
 #spillduration from triang_distributin(5,50,30)
 
-spilltimes = lhs(10,samples=10)
+spilltimes = lhs(1,samples=2)
 
-for i in range(10):
+for i in range(1):
     spilltimes[:,i] = triang(loc=5,scale=45,c=0.556).ppf(spilltimes[:,i])
 
 
@@ -130,7 +130,7 @@ base_dir = os.path.dirname(__file__)
 # !!!!!!!Item should chenged!!!!!!!!!
 water = Water (temperature=290.367946, salinity=35.0)
             
-def run (position, sub, startday, spilldur, season):
+def run (position, sub, startday, spilldur, season, spill_num):
    
     
 
@@ -254,8 +254,8 @@ def run (position, sub, startday, spilldur, season):
 
 #loop for scenarios
 
-def senarios (positions, substances, str_days, str_times, spill_dur, season):
-    global spill_num
+def senarios (positions, substances, str_days, str_times, spill_dur, season, startspill_num):
+    spill_num = startspill_num
     for i in positions:
         for ss in substances:
             for index, j in enumerate(str_days):
@@ -264,7 +264,7 @@ def senarios (positions, substances, str_days, str_times, spill_dur, season):
                 for t in str_times[index]:
                     new_start_date = start_date.replace (hour = t)
                     for z in spill_dur[index]:
-                        run(i, ss, new_start_date, z, season)
+                        run(i, ss, new_start_date, z, season,spill_num)
                         spill_num += 1
 
 
@@ -279,23 +279,25 @@ def senarios (positions, substances, str_days, str_times, spill_dur, season):
 
 if __name__ == "__main__":
     #Creating Thread
-    t1 = threading.Thread (target=senarios, args=(positions1, substances1, str_days, str_times, spill_dur, 'Winter'))
-    t2 = threading.Thread (target=senarios, args=(positions2, substances2, str_days, str_times, spill_dur, 'Winter'))
-    t3 = threading.Thread (target=senarios, args=(positions1, substances1, str_days, str_times, spill_dur, 'Summer'))
-    t4 = threading.Thread (target=senarios, args=(positions2, substances2, str_days, str_times, spill_dur, 'Summer'))
+    t1 = threading.Thread (target=senarios, args=(positions1, substances1, str_days, str_times, spill_dur, 'Winter1', 1))
+    t2 = threading.Thread (target=senarios, args=(positions2, substances2, str_days, str_times, spill_dur, 'Winter1', 101))
+    
 
     # Starting thread1
     t1.start()
     # Starting thread2
     t2.start()
     #starttime from days of Summer
-    startdays = lhs(1,samples=10)
+    startdays = lhs(1,samples=2)
 
     startdays = uniform(loc=182,scale=92).ppf(startdays)
 
     str_days = startdays.astype(int)
     #!!!!!!!! Item should changed!!!!!!
     water = Water (temperature=311.3736, salinity=35.0)
+
+    t3 = threading.Thread (target=senarios, args=(positions1, substances1, str_days, str_times, spill_dur, 'Summer1', 201))
+    t4 = threading.Thread (target=senarios, args=(positions2, substances2, str_days, str_times, spill_dur, 'Summer1', 301))
     # Starting thread3
     t3.start()
     # Starting thread4
