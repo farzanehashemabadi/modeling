@@ -5,7 +5,7 @@ import glob
 import arcpy
 from arcpy import env
 
-def Process (season):
+def Process(season):
 
     # setting my source and target geodatabase 
     base_dir = os.path.dirname(__file__)
@@ -35,15 +35,16 @@ def Process (season):
 
     
 
-    src_dirs = [os.path.join(base_dir, season, str(position) for season in seasons for position in positions]
+    src_dirs = [os.path.join(base_dir, season, str(position)) for position in positions]
 
     #,'Spillnum {}'.format(spill_num))
     #for spill_num in (range(1,51))
 
 
     for src_dir in src_dirs:
-        sour_dirs = glob.glob(src_dir, 'Spillnum /*')
-        for sour_dirs in sour_dir:
+        sour_dirs = glob.glob(src_dir + 'Spillnum *')
+
+        for sour_dir in sour_dirs:
             des_dir = os.path.join (sour_dir, "clipped")
             if not os.path.exists(des_dir):
                 os.mkdir(des_dir)
@@ -70,6 +71,7 @@ def Process (season):
                     for row1 in cell:
                         Area = row1.getValue ('Area')
                         ESI = row1.getValue ('ESI')
+                    
                 
                     #Calculate zigmaFID for each Grid in a Scenario
                     x = re.search('gnome_result(.*)\.shp', src_file_name)
@@ -79,7 +81,8 @@ def Process (season):
                     #print (shps)
                     mass = sum((r[0] for r in arcpy.da.SearchCursor(shp, ['Mass'])))
                     Grid_list[index] += mass
-
+                
+                
                 MCF= (Grid_list[index]) / (30 * Area)
                 Risk1 = MCF * ESI
                 print (index, Risk1)
@@ -90,25 +93,27 @@ def Process (season):
                     f.writerow([index, Risk1])
 
                     
-    #seasons = ['Winter', 'Summer']
-    if __name__ == "__main__":
-        if len(sys.argv) < 2:
-            print("inser run id in command line argument")
-            exit(1)
-        run_id = int (sys.argv[1])
-        if run_id == 1:
-            args = ('Winter')
-        elif run_id == 2:
-            args = ('Summer')
+    
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print("inser run id in command line argument")
+        exit(1)
+    run_id = int (sys.argv[1])
+
+    if run_id == 1:
+        args = ('Winter')
+
+    elif run_id == 2:
+        args = ('Summer')
         
-        else:
-            args = None
+    else:
+        args = None
 
-        if not args:
-            print('bad input')
-            exit(1)     
+    if not args:
+        print('bad input')
+        exit(1)     
                 
-
+    Process(*args)
                 
 
 
